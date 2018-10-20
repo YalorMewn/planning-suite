@@ -644,7 +644,7 @@ contract RangeVoting is IForwarder, AragonApp {
         uint256 dest = _dest;
         uint256 len = _len;
 
-        require(_len < 32);
+        require(_len < 32, "memcpy input too large");
         // Copy remaining bytes
         uint mask = 256 ** (32 - len) - 1;
         assembly {
