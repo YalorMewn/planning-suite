@@ -30,6 +30,7 @@ interface Bounties {
     ) external;
 }
 
+
 contract Projects is AragonApp {
     using SafeMath for uint256;
     Bounties bounties;
