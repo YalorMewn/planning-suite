@@ -4,9 +4,12 @@ const {
   DAOFactory,
   EVMScriptRegistryFactory,
   Kernel,
+  StandardBounties
 } = require('@tpt/test-helpers/artifacts')
 
 const Projects = artifacts.require('Projects')
+
+//const StandardBounties = artifacts.require('@tpt/test-helpers/contracts/lib/bounties/StandardBounties')
 
 const { assertRevert } = require('@tpt/test-helpers/assertThrow')
 
@@ -50,6 +53,9 @@ contract('Projects App', accounts => {
       { from: root }
     )
 
+    // Deploy test Bounties contract
+    bountiesBase = await StandardBounties.new(web3.toBigNumber(owner1))
+
     //Deploy Contract to be tested
     // TODO: Revert to use regular function call when truffle gets updated
     // read: https://github.com/Giveth/planning-app/pull/243
@@ -89,7 +95,8 @@ contract('Projects App', accounts => {
       root,
       { from: root }
     )
-    await app.initialize({ from: accounts[0] })
+
+    await app.initialize(bountiesBase.address)
   })
 
   context('creating and retrieving repos and bounties', function() {
