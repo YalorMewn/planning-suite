@@ -181,6 +181,10 @@ contract Projects is AragonApp {
         );
     }
 
+    function fulfillBounty(uint _bountyId, string _data) external {
+        bounties.fulfillBounty(_bountyId, _data);
+    }
+
     function checkTransValueEqualsMessageValue(
         uint256 _msgValue,
         uint256[] _bountySizes,
