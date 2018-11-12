@@ -205,8 +205,26 @@ contract Projects is AragonApp {
         );
     }
 
-    function fulfillBounty(uint _bountyId, string _data) external {
-        bounties.fulfillBounty(_bountyId, _data);
+    function fulfillBounty(uint _standardBountyId, string _data) external {
+        bounties.fulfillBounty(_standardBountyId, _data);
+    }
+
+    function acceptFulfillment(
+        bytes32 _repoID,
+        uint256 _issueNumber, 
+        uint _bountyFulfillmentID
+    ) external auth(ADD_BOUNTY_ROLE) {
+        GithubIssue storage issue = repos[_repoID].issues[_issueNumber];
+        bounties.acceptFulfillment(issue.standardBountyID, _bountyFulfillmentID);
+        emit FulfillmentAccepted(_repoID, _issueNumber, _bountyFulfillmentID);
+    }
+
+    function getIssue(bytes32 _repoID, uint256 _issueNumber) external view 
+    returns(bool hasBounty, uint standardBountyID)
+    {
+        GithubIssue storage issue = repos[_repoID].issues[_issueNumber];
+        hasBounty = issue.hasBounty;
+        standardBountyID = issue.standardBountyID;
     }
 
     function checkTransValueEqualsMessageValue(
