@@ -164,7 +164,11 @@ contract Projects is AragonApp {
             ipfsHash = substring(_ipfsAddresses, i.mul(46), i.add(1).mul(46));
             standardBountyID = bounties.issueBounty(
                 this,                           //    address _issuer
+<<<<<<< HEAD
                 _deadlines[i] + block.timestamp,    // solium-disable-line security/no-block-members
+=======
+                _deadlines[i]+now,                  //    uint _deadline
+>>>>>>> basic projects tests passing
                 ipfsHash,                       //     parse input to get ipfs hash
                 _bountySizes[i],         //    uint256 _fulfillmentAmount
                 address(0),                     //    address _arbiter
