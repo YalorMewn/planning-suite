@@ -75,22 +75,6 @@ contract Projects is AragonApp {
     bytes32 public constant ADD_BOUNTY_ROLE =  keccak256("ADD_BOUNTY_ROLE");
     bytes32 public constant FULFILL_BOUNTY_ROLE = keccak256("FULFILL_BOUNTY_ROLE");
 
-
-    function fulfillBounty(uint _standardBountyId, string _data) external {
-        bounties.fulfillBounty(_standardBountyId, _data);
-    }
-
-    function acceptFulfillment(
-        bytes32 _repoID,
-        uint256 _issueNumber, 
-        uint _bountyFulfillmentID
-    ) external auth(ADD_BOUNTY_ROLE) 
-    {
-        GithubIssue storage issue = repos[_repoID].issues[_issueNumber];
-        bounties.acceptFulfillment(issue.standardBountyID, _bountyFulfillmentID);
-        emit FulfillmentAccepted(_repoID, _issueNumber, _bountyFulfillmentID);
-    }
-
     function getIssue(bytes32 _repoID, uint256 _issueNumber) external view 
     returns(bool hasBounty, uint standardBountyID)
     {
@@ -106,7 +90,7 @@ contract Projects is AragonApp {
      */
     function addRepo(
         bytes32 _owner, bytes32 _repo
-    ) public auth(ADD_REPO_ROLE) returns (bytes32 _id)
+    ) external auth(ADD_REPO_ROLE) returns (bytes32 _id)
     {
         _id = keccak256(abi.encodePacked(_owner, _repo));  // overflow should still yield a useable identifier
         repos[_id] = GithubRepo(_owner, _repo, 0);
@@ -144,6 +128,21 @@ contract Projects is AragonApp {
         _repo = repos[_id].repo;
     }
 
+    function fulfillBounty(uint _standardBountyId, string _data) external {
+        bounties.fulfillBounty(_standardBountyId, _data);
+    }
+
+    function acceptFulfillment(
+        bytes32 _repoID,
+        uint256 _issueNumber, 
+        uint _bountyFulfillmentID
+    ) external auth(ADD_BOUNTY_ROLE) 
+    {
+        GithubIssue storage issue = repos[_repoID].issues[_issueNumber];
+        bounties.acceptFulfillment(issue.standardBountyID, _bountyFulfillmentID);
+        emit FulfillmentAccepted(_repoID, _issueNumber, _bountyFulfillmentID);
+    }
+
     function addBounties(
         bytes32 _repoID, 
         uint256[] _issueNumbers, 
@@ -164,15 +163,7 @@ contract Projects is AragonApp {
             ipfsHash = substring(_ipfsAddresses, i.mul(46), i.add(1).mul(46));
             standardBountyID = bounties.issueBounty(
                 this,                           //    address _issuer
-<<<<<<< HEAD
-<<<<<<< HEAD
                 _deadlines[i] + block.timestamp,    // solium-disable-line security/no-block-members
-=======
-                _deadlines[i]+now,                  //    uint _deadline
->>>>>>> basic projects tests passing
-=======
-                _deadlines[i] + block.timestamp,    // solium-disable-line security/no-block-members
->>>>>>> lint passing
                 ipfsHash,                       //     parse input to get ipfs hash
                 _bountySizes[i],         //    uint256 _fulfillmentAmount
                 address(0),                     //    address _arbiter
@@ -190,29 +181,6 @@ contract Projects is AragonApp {
                 _bountySizes[i]
             );
         }
-    }
-
-    function fulfillBounty(uint _standardBountyId, string _data) external {
-        bounties.fulfillBounty(_standardBountyId, _data);
-    }
-
-    function acceptFulfillment(
-        bytes32 _repoID,
-        uint256 _issueNumber, 
-        uint _bountyFulfillmentID
-    ) external auth(ADD_BOUNTY_ROLE) 
-    {
-        GithubIssue storage issue = repos[_repoID].issues[_issueNumber];
-        bounties.acceptFulfillment(issue.standardBountyID, _bountyFulfillmentID);
-        emit FulfillmentAccepted(_repoID, _issueNumber, _bountyFulfillmentID);
-    }
-
-    function getIssue(bytes32 _repoID, uint256 _issueNumber) external view 
-    returns(bool hasBounty, uint standardBountyID)
-    {
-        GithubIssue storage issue = repos[_repoID].issues[_issueNumber];
-        hasBounty = issue.hasBounty;
-        standardBountyID = issue.standardBountyID;
     }
 
     function _addBounty(
