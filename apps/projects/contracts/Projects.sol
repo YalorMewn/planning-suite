@@ -105,7 +105,7 @@ contract Projects is AragonApp {
      */
     function removeRepo(
         bytes32 _id
-    ) external auth(REMOVE_REPO_ROLE)
+    ) public auth(REMOVE_REPO_ROLE)
     {
         // Take the repo out of the repo array in constant time by replacing the element
         // with last element
@@ -115,7 +115,7 @@ contract Projects is AragonApp {
         emit RepoRemoved(_id);
     }
 
-    function getRepoArrayLength() external view returns (uint256) {
+    function getRepoArrayLength() public view returns (uint256) {
         return repoIDs.length;
     }
 
@@ -123,7 +123,7 @@ contract Projects is AragonApp {
      * Get an entry from the registry.
      * @param _id The ID of the entry to get
      */
-    function getRepo(bytes32 _id) external view returns (bytes32 _owner, bytes32 _repo) {
+    function getRepo(bytes32 _id) public view returns (bytes32 _owner, bytes32 _repo) {
         _owner = repos[_id].owner;
         _repo = repos[_id].repo;
     }
