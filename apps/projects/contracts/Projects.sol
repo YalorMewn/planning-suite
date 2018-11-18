@@ -83,29 +83,6 @@ contract Projects is AragonApp {
         standardBountyID = issue.standardBountyID;
     }
 
-    function fulfillBounty(uint _standardBountyId, string _data) external {
-        bounties.fulfillBounty(_standardBountyId, _data);
-    }
-
-    function acceptFulfillment(
-        bytes32 _repoID,
-        uint256 _issueNumber, 
-        uint _bountyFulfillmentID
-    ) external auth(ADD_BOUNTY_ROLE) 
-    {
-        GithubIssue storage issue = repos[_repoID].issues[_issueNumber];
-        bounties.acceptFulfillment(issue.standardBountyID, _bountyFulfillmentID);
-        emit FulfillmentAccepted(_repoID, _issueNumber, _bountyFulfillmentID);
-    }
-
-    function getIssue(bytes32 _repoID, uint256 _issueNumber) external view 
-    returns(bool hasBounty, uint standardBountyID)
-    {
-        GithubIssue storage issue = repos[_repoID].issues[_issueNumber];
-        hasBounty = issue.hasBounty;
-        standardBountyID = issue.standardBountyID;
-    }
-
     /**
      * Add an entry to the registry.
      * @param _owner The entry to add to the registry
@@ -128,7 +105,7 @@ contract Projects is AragonApp {
      */
     function removeRepo(
         bytes32 _id
-    ) public auth(REMOVE_REPO_ROLE)
+    ) external auth(REMOVE_REPO_ROLE)
     {
         // Take the repo out of the repo array in constant time by replacing the element
         // with last element
@@ -138,7 +115,7 @@ contract Projects is AragonApp {
         emit RepoRemoved(_id);
     }
 
-    function getRepoArrayLength() public view returns (uint256) {
+    function getRepoArrayLength() external view returns (uint256) {
         return repoIDs.length;
     }
 
@@ -146,7 +123,7 @@ contract Projects is AragonApp {
      * Get an entry from the registry.
      * @param _id The ID of the entry to get
      */
-    function getRepo(bytes32 _id) public view returns (bytes32 _owner, bytes32 _repo) {
+    function getRepo(bytes32 _id) external view returns (bytes32 _owner, bytes32 _repo) {
         _owner = repos[_id].owner;
         _repo = repos[_id].repo;
     }
